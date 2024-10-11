@@ -87,7 +87,7 @@ jobs:
     - name: Upload SARIF file to GitHub Security Tab
       uses: github/codeql-action/upload-sarif@v3  # Updated to v3
       with:
-        sarif_file: ./ngsast-report-QwietAI-java-app.sarif  # Correct dynamic path for SARIF output
+        sarif_file: ./ngsast-report-QwietAI-Java-app.sarif  # Correct dynamic path for SARIF output
   
   Build-Rules: 
     runs-on: ubuntu-latest
