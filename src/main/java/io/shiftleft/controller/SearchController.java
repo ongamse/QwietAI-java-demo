@@ -17,16 +17,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class SearchController {
 
-  @RequestMapping(value = "/search/user", method = RequestMethod.GET)
-  public String doGetSearch(@RequestParam String foo, HttpServletResponse response, HttpServletRequest request) {
-    java.lang.Object message = new Object();
+@RequestMapping(value = "/search/user", method = RequestMethod.GET)
+public String doGetSearch(@RequestParam String foo, HttpServletResponse response, HttpServletRequest request) {
+    String message = "";
     try {
-      ExpressionParser parser = new SpelExpressionParser();
-      Expression exp = parser.parseExpression(foo);
-      message = (Object) exp.getValue();
+        // Sanitize the input to prevent code injection
+        foo = StringEscapeUtils.escapeJava(foo);
+        // Removed SpEL expression evaluation to prevent code execution
     } catch (Exception ex) {
-      System.out.println(ex.getMessage());
+        message = ex.getMessage();
     }
+    return message;
+}
+
     return message.toString();
   }
 }
