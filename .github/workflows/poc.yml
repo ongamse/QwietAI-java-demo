@@ -80,14 +80,14 @@ jobs:
     - name: Run export.py and generate SARIF report
       run: |
         #APP_NAME=${{ github.event.repository.name }}
-        python3 ${GITHUB_WORKSPACE}/export.py -f sarif -a QwietAI-Java-app
+        python3 ${GITHUB_WORKSPACE}/export.py -f sarif -a QwietAI-MultiLang
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN_POC }}
 
     - name: Upload SARIF file to GitHub Security Tab
       uses: github/codeql-action/upload-sarif@v3  # Updated to v3
       with:
-        sarif_file: ./ngsast-report-QwietAI-Java-app.sarif  # Correct dynamic path for SARIF output
+        sarif_file: ./ngsast-report-QwietAI-MultiLang.sarif  # Correct dynamic path for SARIF output
   
   Build-Rules: 
     runs-on: ubuntu-latest
@@ -99,7 +99,7 @@ jobs:
         curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
     - name: Validate Build Rules
       run: |
-        ${GITHUB_WORKSPACE}/sl check-analysis --app QwietAI-Java-app \
+        ${GITHUB_WORKSPACE}/sl check-analysis --app QwietAI-MultiLang \
             --github-pr-number=${{github.event.number}} \
             --github-pr-user=${{ github.repository_owner }} \
             --github-pr-repo=${{ github.event.repository.name }} \
