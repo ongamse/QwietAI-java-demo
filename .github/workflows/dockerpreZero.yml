@@ -13,9 +13,15 @@ on:
 
 jobs:
   NextGen-Static-Analysis:
-    runs-on: shiftleft/core:latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: preZero Scan
       run: |
-        docker run --platform linux/amd64 --rm -t --name slcore -e SHIFTLEFT_ACCESS_TOKEN="$SHIFTLEFT_ACCESS_TOKEN" -v $PWD:/app -v /tmp:/tmp shiftleft/core:latest sl analyze --verbose --app [app=name] --verbose  /app
+        docker run --platform linux/amd64 --rm -t \
+        --name slcore \ 
+        -e SHIFTLEFT_ACCESS_TOKEN="$SHIFTLEFT_ACCESS_TOKEN" \
+        -v $PWD:/app \
+        -v /tmp:/tmp \
+        shiftleft/core:latest \
+        sl analyze --verbose --app javadockerscan --verbose  /app
