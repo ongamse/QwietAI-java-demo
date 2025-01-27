@@ -24,4 +24,4 @@ jobs:
         -v $PWD:/app \
         -v /tmp:/tmp \
         shiftleft/core:latest \
-        sl analyze --verbose --app "javadockerscan" /app
+        sl analyze --verbose --app javadockerscan /app
