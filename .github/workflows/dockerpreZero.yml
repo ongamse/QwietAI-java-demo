@@ -1,8 +1,5 @@
-
 ---
-# This workflow integrates ShiftLeft NG SAST with GitHub
-# Visit https://docs.shiftleft.io for help
-name: QwietPoC
+name: QwietPoCDocker
 
 on:
   pull_request:
@@ -16,12 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: preZero Scan
+    - name: Run preZero Scan with ShiftLeft
+      shell: bash
       run: |
         docker run --platform linux/amd64 --rm -t \
-        --name slcore \ 
-        -e SHIFTLEFT_ACCESS_TOKEN="$SHIFTLEFT_ACCESS_TOKEN" \
-        -v $PWD:/app \
-        -v /tmp:/tmp \
-        shiftleft/core:latest \
-        sl analyze --verbose --app javadockerscan /app
+          --name slcore \
+          -e SHIFTLEFT_ACCESS_TOKEN="$SHIFTLEFT_ACCESS_TOKEN" \
+          -v "${{ github.workspace }}:/app" \
+          -v /tmp:/tmp \
+          shiftleft/core:latest \
+          sl analyze --verbose --app "javadockerscan" /app
