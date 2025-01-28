@@ -22,6 +22,6 @@ jobs:
           -v "${{ github.workspace }}:/app" \
           -v /tmp:/tmp \
           shiftleft/core:latest \
-          sl analyze --verbose --app "javadockerscan" /app
+          sl analyze --verbose --wait --app "javadockerscan" --container 18fgsa/s3-resource /app
 env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
