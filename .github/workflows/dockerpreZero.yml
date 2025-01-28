@@ -23,3 +23,5 @@ jobs:
           -v /tmp:/tmp \
           shiftleft/core:latest \
           sl analyze --verbose --app "javadockerscan" /app
+env:
+        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
