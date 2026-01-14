@@ -32,10 +32,10 @@ jobs:
       id: extract_branch
     - name: NextGen Static Analysis
       #run: ${GITHUB_WORKSPACE}/sl analyze --strict --wait --verbose --app Qwiet-java-GH --tag branch=${{ github.head_ref || steps.extract_branch.outputs.branch }} --vcs-prefix-correction "io/shiftleft=src/main/java/" --java --container 18fgsa/s3-resource target/hello-shiftleft-0.0.1.jar
-      run: ${GITHUB_WORKSPACE}/sl analyze --strict --wait --verbose --app QwietAI-MultiLang --container 18fgsa/s3-resource --tag branch=${{ github.head_ref || steps.extract_branch.outputs.branch }}
+      run: ${GITHUB_WORKSPACE}/sl analyze --strict --wait --verbose --app QWIET_JAVA --container 18fgsa/s3-resource --tag branch=${{ github.head_ref || steps.extract_branch.outputs.branch }}
       #run: QWIET_ENABLE_MULTI_LANGUAGE_ANALYSIS=true ${GITHUB_WORKSPACE}/sl analyze --strict --wait --verbose --app Qwiet-Multi-GH --container 18fgsa/s3-resource --tag branch=${{ github.head_ref || steps.extract_branch.outputs.branch }}
       env:
-        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN_POC }}
+        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
         SHIFTLEFT_API_HOST: www.shiftleft.io
         SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.shiftleft.io:443
         SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443
@@ -61,7 +61,7 @@ jobs:
             "${url}"
       env:
           GH_API_TOKEN: ${{ secrets.API_TOKEN }}
-          SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN_POC }}  
+          SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}  
     - name: Download export.py and requirements.txt
       run: |
         curl -O https://raw.githubusercontent.com/ShiftLeftSecurity/field-integrations/master/shiftleft-utils/export.py
@@ -80,9 +80,9 @@ jobs:
     - name: Run export.py and generate SARIF report
       run: |
         #APP_NAME=${{ github.event.repository.name }}
-        python3 ${GITHUB_WORKSPACE}/export.py -f sarif -a QwietAI-MultiLang
+        python3 ${GITHUB_WORKSPACE}/export.py -f sarif -a QWIET_JAVA
       env:
-        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN_POC }}
+        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
 
     - name: Upload SARIF file to GitHub Security Tab
       uses: github/codeql-action/upload-sarif@v3  # Updated to v3
@@ -99,13 +99,13 @@ jobs:
         curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
     - name: Validate Build Rules
       run: |
-        ${GITHUB_WORKSPACE}/sl check-analysis --app QwietAI-MultiLang \
+        ${GITHUB_WORKSPACE}/sl check-analysis --app QWIET_JAVA \
             --github-pr-number=${{github.event.number}} \
             --github-pr-user=${{ github.repository_owner }} \
             --github-pr-repo=${{ github.event.repository.name }} \
             --github-token=${{ secrets.GITHUB_TOKEN }}
       env:
-        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN_POC }}
+        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
         SHIFTLEFT_API_HOST: www.shiftleft.io
         SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.shiftleft.io:443
         SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443 
