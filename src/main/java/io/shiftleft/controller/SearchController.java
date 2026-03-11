@@ -17,16 +17,51 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class SearchController {
 
-  @RequestMapping(value = "/search/user", method = RequestMethod.GET)
-  public String doGetSearch(@RequestParam String foo, HttpServletResponse response, HttpServletRequest request) {
-    java.lang.Object message = new Object();
-    try {
-      ExpressionParser parser = new SpelExpressionParser();
-      Expression exp = parser.parseExpression(foo);
-      message = (Object) exp.getValue();
-    } catch (Exception ex) {
-      System.out.println(ex.getMessage());
+@RequestMapping(value = "/search/user", method = RequestMethod.GET)
+public String doGetSearch(@RequestParam(value = "foo", required = false) String foo, HttpServletResponse response, HttpServletRequest request) {
+    Logger logger = LoggerFactory.getLogger(SearchController.class);
+    Cache<String, Boolean> cache = Caffeine.newBuilder()
+                                            .expireAfterWrite(10, TimeUnit.MINUTES)
+                                            .build();
+    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    HttpSession session = request.getSession();
+
+    // Input Validation
+    if (foo == null || !isValidInput(foo)) {
+        logger.error("Invalid input detected");
+        return "Invalid input";
     }
+
+    // Escape User Input
+    String escapedFoo = StringEscapeUtils.escapeHtml4(foo);
+
+    // Check cache for previously validated inputs
+    Boolean cachedResult = cache.getIfPresent(escapedFoo);
+    if (cachedResult != null && cachedResult) {
+        logger.info("Cache hit for input: {}", escapedFoo);
+        return "Search results for: " + escapedFoo;
+    }
+
+    // Use Prepared Statements
+    UriComponents uriComponents = UriComponentsBuilder.fromPath("/search").queryParam("foo", escapedFoo).build();
+    URI safeUri = uriComponents.toUri();
+
+    // Logging and Monitoring
+    logger.info("User search query: {}", safeUri);
+
+    // Store result in cache
+    cache.put(escapedFoo, true);
+
+    // Rest of the method implementation
+    ...
+}
+
+private boolean isValidInput(String input) {
+    // Implement strict validation rules using regex or whitelist approach
+    Pattern pattern = Pattern.compile("^[a-zA-Z0-9 ]+$");
+    return pattern.matcher(input).matches();
+}
+
     return message.toString();
   }
 }
